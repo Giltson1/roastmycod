@@ -1,29 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 function MessageBubble({ type, message }) {
-  const bubbleStyle = {
-    maxWidth: '70%',
-    padding: '10px 15px',
-    margin: '5px 0',
-    borderRadius: '18px',
-    wordWrap: 'break-word',
-    ...(type === 'user' ? {
-      backgroundColor: '#007bff',
-      color: 'white',
-      alignSelf: 'flex-end',
-      marginLeft: 'auto'
-    } : {
-      backgroundColor: '#f1f1f1',
-      color: 'black',
-      alignSelf: 'flex-start',
-      marginRight: 'auto'
-    })
-  };
+  if (type === 'user') {
+    return (
+      <div className="message user">
+        <div className="bubble">{message}</div>
+      </div>
+    );
+  }
 
   return (
-    <div className={`message-bubble ${type}`} style={bubbleStyle}>
-      {message}
+    <div className="message bot markdown">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{message}</ReactMarkdown>
     </div>
   );
 }

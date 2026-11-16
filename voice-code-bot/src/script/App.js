@@ -85,16 +85,25 @@ function App() {
   };
 
   return (
-    <div className="app-container">
-      <h1>🧠 Voice Code Bot</h1>
-      <VoiceButton onVoiceInput={handleVoiceInput} disabled={isLoading} />
-      <CodeInput
-        code={code}
-        setCode={setCode}
-        onSubmit={handleAnalyze}
-        disabled={isLoading}
-      />
-      <ChatBox messages={messages} isLoading={isLoading} />
+    <div className="app">
+      <header className="app-header">Voice Code Bot</header>
+      <main className="chat-scroll">
+        <div className="column">
+          <ChatBox messages={messages} isLoading={isLoading} />
+        </div>
+      </main>
+      <div className="composer-wrap">
+        <div className="column">
+          <CodeInput
+            code={code}
+            setCode={setCode}
+            onSubmit={handleAnalyze}
+            disabled={isLoading}
+          >
+            <VoiceButton onVoiceInput={handleVoiceInput} disabled={isLoading} />
+          </CodeInput>
+        </div>
+      </div>
     </div>
   );
 }

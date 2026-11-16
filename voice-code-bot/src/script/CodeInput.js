@@ -2,7 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import TextareaAutosize from 'react-textarea-autosize';
 
-function CodeInput({ code, setCode, onSubmit, disabled }) {
+// Up-arrow icon used on the send button
+function SendIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 19V5" />
+      <path d="M5 12l7-7 7 7" />
+    </svg>
+  );
+}
+
+function CodeInput({ code, setCode, onSubmit, disabled, children }) {
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && e.ctrlKey && !disabled) {
       onSubmit();
@@ -10,40 +20,29 @@ function CodeInput({ code, setCode, onSubmit, disabled }) {
   };
 
   return (
-    <div className="code-input-container">
+    <div className="composer">
       <TextareaAutosize
         value={code}
         onChange={(e) => setCode(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Enter your code here... (Ctrl+Enter to submit)"
-        minRows={5}
-        maxRows={20}
+        placeholder="Paste code or ask a question…"
+        minRows={1}
+        maxRows={12}
         disabled={disabled}
-        style={{ 
-          width: '100%', 
-          fontFamily: 'monospace', 
-          fontSize: '1rem',
-          padding: '10px',
-          border: '1px solid #ccc',
-          borderRadius: '4px',
-          resize: 'vertical'
-        }}
       />
-      <button 
-        onClick={onSubmit} 
-        disabled={disabled || !code.trim()}
-        style={{ 
-          marginTop: '10px',
-          padding: '10px 20px',
-          backgroundColor: disabled ? '#ccc' : '#007bff',
-          color: 'white',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: disabled ? 'not-allowed' : 'pointer'
-        }}
-      >
-        {disabled ? 'Analyzing...' : 'Analyze Code'}
-      </button>
+      <div className="composer-actions">
+        <span className="hint">Ctrl+Enter to send</span>
+        {children}
+        <button
+          className="icon-button send-button"
+          onClick={onSubmit}
+          disabled={disabled || !code.trim()}
+          aria-label={disabled ? 'Analyzing…' : 'Analyze code'}
+          title={disabled ? 'Analyzing…' : 'Analyze code'}
+        >
+          <SendIcon />
+        </button>
+      </div>
     </div>
   );
 }
@@ -52,7 +51,8 @@ CodeInput.propTypes = {
   code: PropTypes.string.isRequired,
   setCode: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
+  children: PropTypes.node
 };
 
 CodeInput.defaultProps = {
