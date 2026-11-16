@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
-# Load the .env at the repo root (Talk-with-me-/.env), regardless of where the server is started from.
-load_dotenv(Path(__file__).resolve().parents[3] / ".env")
+# Load the .env at the repo root (Talk-with-me-/.env), from voice-code-bot/app.py, regardless of where the server is started from.
+load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 app = Flask(__name__)
 

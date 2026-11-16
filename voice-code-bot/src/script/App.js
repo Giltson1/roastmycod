@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import VoiceButton from './frontend/VoiceButton';
-import CodeInput from './frontend/CodeInput';
-import ChatBox from './frontend/ChatBox';
-import './App.css';
+import VoiceButton from './VoiceButton';
+import CodeInput from './CodeInput';
+import ChatBox from './ChatBox';
+import '../style/App.css';
 
 function App() {
   const [code, setCode] = useState('');
