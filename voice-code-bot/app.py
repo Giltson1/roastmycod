@@ -84,6 +84,12 @@ def analyze_code():
     return jsonify({"feedback": feedback.strip()})
 
 
+# Home route: tells visitors this is the API and where the app is
+@app.route("/", methods=["GET"])
+def index():
+    return jsonify({"message": "Voice Code Bot API is running. Open the frontend at http://localhost:3000"})
+
+
 @app.route("/health", methods=["GET"])
 def health_check():
     return jsonify({"status": "healthy", "key_configured": bool(LLM_API_KEY), "model": LLM_MODEL})
