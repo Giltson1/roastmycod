@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import VoiceButton from './VoiceButton';
 import CodeInput from './CodeInput';
 import ChatBox from './ChatBox';
+import ModePicker from './ModePicker';
 import '../style/App.css';
 
 function App() {
   const [code, setCode] = useState('');
+  const [mode, setMode] = useState('friend');
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const abortControllerRef = useRef(null);
@@ -34,7 +36,7 @@ function App() {
       const response = await fetch(`${API_BASE_URL}/analyze-code`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code }),
+        body: JSON.stringify({ code, mode }),
         signal: abortControllerRef.current.signal,
       });
 
@@ -85,8 +87,8 @@ function App() {
   };
 
   return (
-    <div className="app">
-      <header className="app-header">Voice Code Bot</header>
+    <div className={`app mode-${mode}`}>
+      <header className="app-header">Code Roast</header>
       <main className="chat-scroll">
         <div className="column">
           <ChatBox messages={messages} isLoading={isLoading} />
@@ -94,6 +96,7 @@ function App() {
       </main>
       <div className="composer-wrap">
         <div className="column">
+          <ModePicker mode={mode} setMode={setMode} disabled={isLoading} />
           <CodeInput
             code={code}
             setCode={setCode}

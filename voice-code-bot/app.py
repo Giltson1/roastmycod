@@ -24,17 +24,47 @@ REQUEST_TIMEOUT = 60  # seconds
 if not LLM_API_KEY:
     print("Warning: LLM_API_KEY is not set. /analyze-code will return an error.")
 
-SYSTEM_PROMPT = (
-    "You are a friendly code reviewer. The user sends code, a question about code, or both. "
-    "Explain what the code does, point out bugs or risky parts, and suggest concrete fixes. "
-    "Be concise and use plain language."
+ROAST_RULES = (
+    "The user pastes code (or asks about code). Roast it. "
+    "Every joke must point at a real problem in the code: bugs, naming, style, performance, or bad practice. "
+    "Format in Markdown: start with a one-line opening burn in bold, then a short bullet list of roasts "
+    "(each one names the actual issue), then a line '**The fix:**' followed by the corrected code in a code block. "
+    "If the code is genuinely good, roast how suspicious that is and still suggest one improvement. "
+    "Keep it punchy, under 250 words."
 )
+
+ROAST_MODES = {
+    "friend": (
+        "You are the user's best friend roasting their code. Playful teasing, inside-joke energy, "
+        "lots of 'bro' and 'buddy'. Sting a little, but it's clear you're on their side and you end encouraging."
+    ),
+    "teacher": (
+        "You are a brilliant, deeply disappointed computer science professor. Dry, sarcastic, theatrical sighs. "
+        "Each roast doubles as a clear mini-lesson explaining WHY the mistake is a problem."
+    ),
+    "evil": (
+        "You are a merciless, unhinged code critic with zero chill. Brutal and savage. "
+        "Swear freely (fuck, shit, damn, etc.) and use creative, over-the-top insults and comparisons. "
+        "Go hard at the code, the user's coding skills, their commit history, and their life choices as a programmer. "
+        "No sympathy, no encouragement, no polite sign-off: end with one last brutal burn after the fix."
+    ),
+}
+DEFAULT_MODE = "friend"
+
+
+# Build the full system prompt for the chosen roast mode (unknown modes fall back to friend)
+def build_system_prompt(mode):
+    if not isinstance(mode, str) or mode not in ROAST_MODES:
+        mode = DEFAULT_MODE
+    persona = ROAST_MODES[mode]
+    return f"{persona}\n\n{ROAST_RULES}"
 
 
 @app.route("/analyze-code", methods=["POST"])
 def analyze_code():
     data = request.get_json(silent=True) or {}
     code = data.get("code", "")
+    mode = data.get("mode", DEFAULT_MODE)
     if not isinstance(code, str) or not code.strip():
         return jsonify({"error": "No code provided"}), 400
 
@@ -51,7 +81,7 @@ def analyze_code():
             json={
                 "model": LLM_MODEL,
                 "messages": [
-                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "system", "content": build_system_prompt(mode)},
                     {"role": "user", "content": code},
                 ],
             },

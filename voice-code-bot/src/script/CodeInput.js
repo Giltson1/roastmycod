@@ -25,7 +25,7 @@ function CodeInput({ code, setCode, onSubmit, disabled, children }) {
         value={code}
         onChange={(e) => setCode(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder="Paste code or ask a question…"
+        placeholder="Paste the code you're proud of…"
         minRows={1}
         maxRows={12}
         disabled={disabled}
@@ -37,8 +37,8 @@ function CodeInput({ code, setCode, onSubmit, disabled, children }) {
           className="icon-button send-button"
           onClick={onSubmit}
           disabled={disabled || !code.trim()}
-          aria-label={disabled ? 'Analyzing…' : 'Analyze code'}
-          title={disabled ? 'Analyzing…' : 'Analyze code'}
+          aria-label={disabled ? 'Roasting…' : 'Roast it'}
+          title={disabled ? 'Roasting…' : 'Roast it'}
         >
           <SendIcon />
         </button>

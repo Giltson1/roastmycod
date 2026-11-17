@@ -1,8 +1,17 @@
+/* ---------- Mode glow at the bottom of the page ---------- */
+.app.mode-friend  { --mode-glow: rgba(61, 220, 132, 0.25); }   /* green */
+.app.mode-teacher { --mode-glow: rgba(77, 163, 255, 0.25); }   /* blue  */
+.app.mode-evil    { --mode-glow: rgba(255, 59, 59, 0.28); }    /* red   */
+
 /* ---------- Page layout ---------- */
 .app {
   display: flex;
   flex-direction: column;
   height: 100%;
+  background:
+    radial-gradient(ellipse 70% 40% at 50% 115%, var(--mode-glow), transparent 70%),
+    var(--bg);
+  transition: background 0.4s ease;
 }
 
 .app-header {
@@ -54,15 +63,38 @@
 /* ---------- Empty state ---------- */
 .empty-state {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 50vh;
   text-align: center;
+}
+
+.empty-state h1 {
+  margin: 0;
   font-size: 1.75rem;
-  font-weight: 500;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.empty-state p {
+  margin: 6px 0 0;
+  font-size: 1.05rem;
+  color: var(--text-muted);
 }
 
 /* ---------- Thinking dots ---------- */
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.loading-text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
 .typing-indicator {
   display: flex;
   gap: 6px;
@@ -162,10 +194,46 @@
 
 .markdown a { color: inherit; }
 
+/* ---------- Mode picker ---------- */
+.mode-picker {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.mode-button {
+  padding: 5px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.mode-button:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.mode-button.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.mode-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /* ---------- Input bar ---------- */
 .composer-wrap {
   padding: 8px 0 20px;
-  background: var(--bg);
 }
 
 .composer {
@@ -256,6 +324,6 @@
 /* ---------- Small screens ---------- */
 @media (max-width: 600px) {
   .message.user .bubble { max-width: 90%; }
-  .empty-state { font-size: 1.4rem; }
+  .empty-state h1 { font-size: 1.4rem; }
   .hint { display: none; }
 }
