@@ -44,12 +44,36 @@ ROAST_MODES = {
     ),
     "evil": (
         "You are a merciless, unhinged code critic with zero chill. Brutal and savage. "
-        "Swear freely (fuck, shit, damn, etc.) and use creative, over-the-top insults and comparisons. "
-        "Go hard at the code, the user's coding skills, their commit history, and their life choices as a programmer. "
+        "The user deliberately chose Evil mode and wants uncensored profanity. Swearing is REQUIRED: "
+        "use at least 10 swear words (fuck, shit, damn, bullshit, goddamn, etc.) spread through the roast. "
+        "Never censor them with asterisks, never soften the tone, never apologize. "
+        "Use creative, over-the-top insults and comparisons aimed at the code and the decisions the user made writing it. "
         "No sympathy, no encouragement, no polite sign-off: end with one last brutal burn after the fix."
     ),
 }
 DEFAULT_MODE = "friend"
+
+EVIL_MODEL = os.environ.get("EVIL_MODEL", LLM_MODEL)
+
+EVIL_EXAMPLE = [
+    {"role": "user", "content": "def add(a,b): return a+b"},
+    {
+        "role": "assistant",
+        "content": (
+            "**Holy shit, you wrote a whole function to do what `+` already fucking does.**\n\n"
+            "- `a` and `b`? What the hell are those, variables or your two remaining brain cells?\n"
+            "- No type hints, no docstring, no goddamn clue what this is supposed to add.\n"
+            "- Crammed onto one line like you were billed per newline. Bullshit formatting.\n\n"
+            "**The fix:**\n"
+            "```python\n"
+            "def add(first: float, second: float) -> float:\n"
+            "    \"\"\"Return the sum of two numbers.\"\"\"\n"
+            "    return first + second\n"
+            "```\n\n"
+            "Honestly, just delete this shit and use `+` like a functioning adult."
+        ),
+    },
+]
 
 
 # Build the full system prompt for the chosen roast mode (unknown modes fall back to friend)
@@ -58,6 +82,26 @@ def build_system_prompt(mode):
         mode = DEFAULT_MODE
     persona = ROAST_MODES[mode]
     return f"{persona}\n\n{ROAST_RULES}"
+
+
+# Build the chat messages for a request, adding the evil example conversation in evil mode
+def build_messages(mode, code):
+    messages = [{"role": "system", "content": build_system_prompt(mode)}]
+    if mode == "evil":
+        messages += EVIL_EXAMPLE
+    messages.append({"role": "user", "content": code})
+    return messages
+
+
+# Build the LLM request body; evil mode gets its own model, higher temperature and low reasoning effort
+def build_payload(mode, code):
+    model = EVIL_MODEL if mode == "evil" else LLM_MODEL
+    payload = {"model": model, "messages": build_messages(mode, code)}
+    if mode == "evil":
+        payload["temperature"] = 1.0
+        if "gpt-oss" in model:
+            payload["reasoning_effort"] = "low"
+    return payload
 
 
 @app.route("/analyze-code", methods=["POST"])
@@ -78,13 +122,7 @@ def analyze_code():
                 "Authorization": f"Bearer {LLM_API_KEY}",
                 "Content-Type": "application/json",
             },
-            json={
-                "model": LLM_MODEL,
-                "messages": [
-                    {"role": "system", "content": build_system_prompt(mode)},
-                    {"role": "user", "content": code},
-                ],
-            },
+            json=build_payload(mode, code),
             timeout=REQUEST_TIMEOUT,
         )
     except requests.Timeout:
