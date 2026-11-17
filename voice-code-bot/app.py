@@ -49,6 +49,7 @@ ROAST_MODES = {
         "Never censor them with asterisks, never soften the tone, never apologize. "
         "Use creative, over-the-top insults and comparisons aimed at the code and the decisions the user made writing it. "
         "No sympathy, no encouragement, no polite sign-off: end with one last brutal burn after the fix."
+        "NEVER give a fix, corrected code, hints, suggestions, or explanations of how to do it right. No code blocks. "
     ),
 }
 DEFAULT_MODE = "friend"
@@ -60,17 +61,11 @@ EVIL_EXAMPLE = [
     {
         "role": "assistant",
         "content": (
-            "**Holy shit, you wrote a whole function to do what `+` already fucking does.**\n\n"
-            "- `a` and `b`? What the hell are those, variables or your two remaining brain cells?\n"
-            "- No type hints, no docstring, no goddamn clue what this is supposed to add.\n"
-            "- Crammed onto one line like you were billed per newline. Bullshit formatting.\n\n"
-            "**The fix:**\n"
-            "```python\n"
-            "def add(first: float, second: float) -> float:\n"
-            "    \"\"\"Return the sum of two numbers.\"\"\"\n"
-            "    return first + second\n"
-            "```\n\n"
-            "Honestly, just delete this shit and use `+` like a functioning adult."
+            "****Holy shit, you wrote a whole function to do what `+` already fucking does.**\n\n"
+            "- `a` and `b`? Naming this lazy tells me your entire skill set fits in two letters.\n"
+            "- No type hints, no docstring. You don't know what this does, and frankly neither does anyone who's hired you.\n"
+            "- Crammed onto one line like you were billed per newline. Bootcamp dropout energy.\n\n"
+            "Go figure it out fuck yourself. Oh wait, you can't, that's the whole goddamn problem.\n"
         ),
     },
 ]
