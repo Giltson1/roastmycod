@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: voice-code-bot-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --chdir voice-code-bot app:app --bind 0.0.0.0:$PORT --timeout 90
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: LLM_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+
+  - type: web
+    name: voice-code-bot
+    runtime: static
+    rootDir: voice-code-bot
+    buildCommand: npm ci && npm run build
+    staticPublishPath: build
+    envVars:
+      - key: REACT_APP_API_URL
+        sync: false
+      - key: PUBLIC_URL
+        value: /

@@ -11,9 +11,12 @@ load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 app = Flask(__name__)
 
+EXTRA_ORIGINS = [o.strip() for o in os.environ.get("CORS_ORIGINS", "").split(",") if o.strip()]
+
 CORS(app, origins=[
     "http://localhost:3000",
     "https://giltson1.github.io",
+    *EXTRA_ORIGINS,
 ])
 
 LLM_URL = os.environ.get("LLM_URL", "https://api.groq.com/openai/v1/chat/completions")
