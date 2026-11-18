@@ -14,8 +14,9 @@ function SendIcon() {
 
 function CodeInput({ code, setCode, onSubmit, disabled, children }) {
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && e.ctrlKey && !disabled) {
-      onSubmit();
+    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+      e.preventDefault();
+      if (!disabled) onSubmit();
     }
   };
 
@@ -31,7 +32,7 @@ function CodeInput({ code, setCode, onSubmit, disabled, children }) {
         disabled={disabled}
       />
       <div className="composer-actions">
-        <span className="hint">Ctrl+Enter to send</span>
+        <span className="hint">Enter to send, Shift+Enter for new line</span>
         {children}
         <button
           className="icon-button send-button"
